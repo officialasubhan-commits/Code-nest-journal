@@ -26,8 +26,7 @@ export default async function Home() {
   } = await getHomepageData();
 
   const renderHeroTitle = () => {
-    // Static heading as required; never animated.
-    return "Where Ideas Become Software.";
+    return settings?.heroTitle || "Where Ideas Become Software.";
   };
 
 
