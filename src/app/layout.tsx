@@ -16,22 +16,47 @@ import { getSiteSettings } from "@/app/admin/settings/actions";
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
+  const siteUrl = settings?.siteUrl || "https://dev-s-journal.vercel.app";
 
   return {
+    metadataBase: new URL(siteUrl),
     title: {
       template: `%s | ${settings?.siteTitle || "Boss Journal"}`,
       default: settings?.seoTitle || settings?.siteTitle || "Boss Journal | Portfolio & Digital Home",
     },
     description: settings?.seoDescription || settings?.siteDescription || "My digital home, where I document my journey, learning, projects, and daily life.",
-    keywords: settings?.seoKeywords || undefined,
-    openGraph: settings?.ogImage ? {
-      images: [settings.ogImage]
-    } : undefined,
+    keywords: settings?.seoKeywords ? settings.seoKeywords.split(",").map((k: string) => k.trim()) : undefined,
+    alternates: {
+      canonical: "/",
+    },
+    openGraph: {
+      title: settings?.seoTitle || settings?.siteTitle || "Boss Journal",
+      description: settings?.seoDescription || settings?.siteDescription,
+      url: "/",
+      siteName: settings?.siteTitle || "Boss Journal",
+      locale: "en_US",
+      type: "website",
+      images: settings?.ogImage ? [
+        {
+          url: settings.ogImage,
+          width: 1200,
+          height: 630,
+          alt: settings?.siteTitle || "Boss Journal",
+        }
+      ] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: settings?.seoTitle || settings?.siteTitle || "Boss Journal",
+      description: settings?.seoDescription || settings?.siteDescription,
+      images: settings?.ogImage ? [settings.ogImage] : [],
+    },
     icons: settings?.siteFavicon ? {
       icon: settings.siteFavicon
     } : undefined
   };
 }
+
 
 export default async function RootLayout({
   children,
