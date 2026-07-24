@@ -76,15 +76,15 @@ export default async function AdminDashboard() {
 
     // Calculate day counter statistics
     const now = new Date();
-    const launchDate = settings?.launchedAt || now;
+    const launchDate = settings?.launchedAt ? new Date(settings.launchedAt) : now;
     
     const ageMs = Math.max(0, now.getTime() - launchDate.getTime());
     const websiteAgeDays = Math.floor(ageMs / (1000 * 60 * 60 * 24));
 
     let maintenanceMs = 0;
     for (const log of maintenanceLogs) {
-      const start = log.enabledAt.getTime();
-      const end = log.disabledAt ? log.disabledAt.getTime() : now.getTime();
+      const start = new Date(log.enabledAt).getTime();
+      const end = log.disabledAt ? new Date(log.disabledAt).getTime() : now.getTime();
       maintenanceMs += Math.max(0, end - start);
     }
     
@@ -102,10 +102,10 @@ export default async function AdminDashboard() {
       latestPostUpdate?.updatedAt,
       latestProjectUpdate?.updatedAt,
       latestImageUpdate?.createdAt,
-    ].filter(Boolean) as Date[];
+    ].filter(Boolean) as (Date | string)[];
     
     const lastUpdated = modificationDates.length > 0 
-      ? new Date(Math.max(...modificationDates.map(d => d.getTime()))) 
+      ? new Date(Math.max(...modificationDates.map(d => new Date(d).getTime()))) 
       : now;
 
     const formattedLaunchDate = launchDate.toLocaleDateString("en-US", {
