@@ -8,6 +8,8 @@ import { SlideUp, StaggerContainer, FadeIn } from "@/components/ui/animations";
 import { WelcomePopup } from "@/components/WelcomePopup";
 import { TypingAnimationWrapper } from "../components/home/TypingAnimationWrapper";
 
+import { DeveloperSvg } from "@/components/ui/DeveloperSvg";
+
 import { getHomepageData } from "@/lib/services/homepage";
 
 export default async function Home() {
@@ -77,14 +79,18 @@ export default async function Home() {
             <div className="bg-[var(--card)] rounded-3xl border border-[var(--border-color)]/80 p-6 flex flex-col gap-6 shadow-md hover:shadow-lg transition-all duration-300 group">
               
               {/* Profile Image container */}
-              <div className="aspect-square relative w-full rounded-2xl overflow-hidden bg-[var(--secondary-bg)] border border-[var(--border-color)]/60">
-                <SafeImage
-                  src={settings?.heroProfileImage || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=300&auto=format&fit=crop"}
-                  alt={settings?.authorName || "Profile Avatar"}
-                  fill
-                  className="object-cover group-hover:scale-[1.01] transition-transform duration-500"
-                  priority
-                />
+              <div className="aspect-square relative w-full rounded-2xl overflow-hidden bg-[var(--secondary-bg)] border border-[var(--border-color)]/60 flex items-center justify-center">
+                {settings?.heroProfileImage ? (
+                  <SafeImage
+                    src={settings.heroProfileImage}
+                    alt={settings?.authorName || "Profile Avatar"}
+                    fill
+                    className="object-cover group-hover:scale-[1.01] transition-transform duration-500"
+                    priority
+                  />
+                ) : (
+                  <DeveloperSvg />
+                )}
               </div>
 
               {/* Details */}
