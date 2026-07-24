@@ -4,7 +4,7 @@ import prisma from '@/lib/prisma';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const settings = await getSiteSettings();
-  const siteUrl = settings?.siteUrl || 'https://dev-s-journal.vercel.app';
+  const siteUrl = settings?.siteUrl || 'https://code-nest-journal.vercel.app';
 
   // Static routes
   const routes = [
