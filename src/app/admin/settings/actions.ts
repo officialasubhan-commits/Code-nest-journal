@@ -679,71 +679,76 @@ export async function saveHomepageSettings(formData: FormData) {
   try {
     await assertAdmin();
 
-    const heroTitle = (formData.get("heroTitle") as string) || "";
-    const heroHighlighted = (formData.get("heroHighlighted") as string) || "";
-    const heroDescription = (formData.get("heroDescription") as string) || "";
-    const heroProfileImage = (formData.get("heroProfileImage") as string) || "";
-    const heroBgDecor = (formData.get("heroBgDecor") as string) || "glow";
-    const heroBtnPrimaryText = (formData.get("heroBtnPrimaryText") as string) || "";
-    const heroBtnPrimaryLink = (formData.get("heroBtnPrimaryLink") as string) || "";
-    const heroBtnSecondaryText = (formData.get("heroBtnSecondaryText") as string) || "";
-    const heroBtnSecondaryLink = (formData.get("heroBtnSecondaryLink") as string) || "";
-    const authorTitle = (formData.get("authorTitle") as string) || "";
-    const authorBio = (formData.get("authorBio") as string) || "";
+    const section = formData.get("section") as string;
+    const updateData: any = {};
 
-    const featuredProjects = formData.getAll("featuredProjects") as string[];
-    const featuredPosts = formData.getAll("featuredPosts") as string[];
-    const featuredCertificates = formData.getAll("featuredCertificates") as string[];
-    const featuredCourses = formData.getAll("featuredCourses") as string[];
+    if (section === "hero") {
+      updateData.heroTitle = (formData.get("heroTitle") as string) || "";
+      updateData.heroHighlighted = (formData.get("heroHighlighted") as string) || "";
+      updateData.heroDescription = (formData.get("heroDescription") as string) || "";
+      updateData.heroBgDecor = (formData.get("heroBgDecor") as string) || "glow";
+      updateData.heroBtnPrimaryText = (formData.get("heroBtnPrimaryText") as string) || "";
+      updateData.heroBtnPrimaryLink = (formData.get("heroBtnPrimaryLink") as string) || "";
+      updateData.heroBtnSecondaryText = (formData.get("heroBtnSecondaryText") as string) || "";
+      updateData.heroBtnSecondaryLink = (formData.get("heroBtnSecondaryLink") as string) || "";
 
-    const typingConfigRaw = formData.get("typingConfig") as string;
-    let typingConfig = null;
-    if (typingConfigRaw) {
-      try {
-        typingConfig = JSON.parse(typingConfigRaw);
-      } catch (e) {
-        console.error("Failed to parse typingConfig", e);
+      const typingConfigRaw = formData.get("typingConfig") as string;
+      if (typingConfigRaw) {
+        try {
+          updateData.typingConfig = JSON.parse(typingConfigRaw);
+        } catch (e) {
+          console.error("Failed to parse typingConfig", e);
+        }
       }
+    } else if (section === "profile") {
+      updateData.heroProfileImage = (formData.get("heroProfileImage") as string) || "";
+      updateData.authorTitle = (formData.get("authorTitle") as string) || "";
+      updateData.authorBio = (formData.get("authorBio") as string) || "";
+    } else if (section === "featured") {
+      updateData.featuredProjects = formData.getAll("featuredProjects") as string[];
+      updateData.featuredPosts = formData.getAll("featuredPosts") as string[];
+      updateData.featuredCertificates = formData.getAll("featuredCertificates") as string[];
+      updateData.featuredCourses = formData.getAll("featuredCourses") as string[];
+    } else {
+      // Fallback merge based on what's present in the formData keys
+      if (formData.has("heroTitle")) updateData.heroTitle = formData.get("heroTitle") as string;
+      if (formData.has("heroHighlighted")) updateData.heroHighlighted = formData.get("heroHighlighted") as string;
+      if (formData.has("heroDescription")) updateData.heroDescription = formData.get("heroDescription") as string;
+      if (formData.has("heroProfileImage")) updateData.heroProfileImage = formData.get("heroProfileImage") as string;
+      if (formData.has("heroBgDecor")) updateData.heroBgDecor = formData.get("heroBgDecor") as string;
+      if (formData.has("heroBtnPrimaryText")) updateData.heroBtnPrimaryText = formData.get("heroBtnPrimaryText") as string;
+      if (formData.has("heroBtnPrimaryLink")) updateData.heroBtnPrimaryLink = formData.get("heroBtnPrimaryLink") as string;
+      if (formData.has("heroBtnSecondaryText")) updateData.heroBtnSecondaryText = formData.get("heroBtnSecondaryText") as string;
+      if (formData.has("heroBtnSecondaryLink")) updateData.heroBtnSecondaryLink = formData.get("heroBtnSecondaryLink") as string;
+      if (formData.has("authorTitle")) updateData.authorTitle = formData.get("authorTitle") as string;
+      if (formData.has("authorBio")) updateData.authorBio = formData.get("authorBio") as string;
+      if (formData.has("featuredProjects")) updateData.featuredProjects = formData.getAll("featuredProjects") as string[];
+      if (formData.has("featuredPosts")) updateData.featuredPosts = formData.getAll("featuredPosts") as string[];
+      if (formData.has("featuredCertificates")) updateData.featuredCertificates = formData.getAll("featuredCertificates") as string[];
+      if (formData.has("featuredCourses")) updateData.featuredCourses = formData.getAll("featuredCourses") as string[];
     }
 
     await prisma.homepageSettings.upsert({
       where: { id: "singleton" },
-      update: {
-        heroTitle,
-        heroHighlighted,
-        heroDescription,
-        heroProfileImage,
-        heroBgDecor,
-        heroBtnPrimaryText,
-        heroBtnPrimaryLink,
-        heroBtnSecondaryText,
-        heroBtnSecondaryLink,
-        authorTitle,
-        authorBio,
-        featuredProjects,
-        featuredPosts,
-        featuredCertificates,
-        featuredCourses,
-        typingConfig: typingConfig || undefined
-      },
+      update: updateData,
       create: {
         id: "singleton",
-        heroTitle,
-        heroHighlighted,
-        heroDescription,
-        heroProfileImage,
-        heroBgDecor,
-        heroBtnPrimaryText,
-        heroBtnPrimaryLink,
-        heroBtnSecondaryText,
-        heroBtnSecondaryLink,
-        authorTitle,
-        authorBio,
-        featuredProjects,
-        featuredPosts,
-        featuredCertificates,
-        featuredCourses,
-        typingConfig: typingConfig || undefined
+        heroTitle: "",
+        heroHighlighted: "",
+        heroDescription: "",
+        heroProfileImage: "",
+        heroBgDecor: "glow",
+        heroBtnPrimaryText: "",
+        heroBtnPrimaryLink: "",
+        heroBtnSecondaryText: "",
+        heroBtnSecondaryLink: "",
+        authorTitle: "",
+        authorBio: "",
+        featuredProjects: [],
+        featuredPosts: [],
+        featuredCertificates: [],
+        featuredCourses: [],
+        ...updateData
       },
     });
 

@@ -155,28 +155,35 @@ export function HomepageSettingsForm({
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>, section: "hero" | "profile" | "featured") => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
     setSuccess("");
 
     const data = new FormData(e.currentTarget);
+    data.set("section", section);
     
-    // Append array items
-    selectedProjects.forEach(id => data.append("featuredProjects", id));
-    selectedPosts.forEach(id => data.append("featuredPosts", id));
-    selectedCertificates.forEach(id => data.append("featuredCertificates", id));
-    selectedCourses.forEach(id => data.append("featuredCourses", id));
-    
-    data.set("heroHighlighted", highlightedWords.join(","));
+    if (section === "hero") {
+      data.set("heroHighlighted", highlightedWords.join(","));
+    } else if (section === "featured") {
+      // Clear defaults and re-append values
+      data.delete("featuredProjects");
+      data.delete("featuredPosts");
+      data.delete("featuredCertificates");
+      data.delete("featuredCourses");
+      selectedProjects.forEach(id => data.append("featuredProjects", id));
+      selectedPosts.forEach(id => data.append("featuredPosts", id));
+      selectedCertificates.forEach(id => data.append("featuredCertificates", id));
+      selectedCourses.forEach(id => data.append("featuredCourses", id));
+    }
 
     try {
       const res = await saveHomepageSettings(data);
       if (res?.error) {
         setError(res.error);
       } else {
-        setSuccess(res?.success || "Settings saved successfully!");
+        setSuccess(res?.success || `${section.charAt(0).toUpperCase() + section.slice(1)} settings saved successfully!`);
       }
     } catch (err: any) {
       setError(err?.message || "An unexpected error occurred.");
@@ -223,12 +230,13 @@ export function HomepageSettingsForm({
       </div>
 
       {/* Form Content */}
-      <form onSubmit={handleSubmit} className="bg-[var(--card)] border border-[var(--border-color)]/80 p-6 rounded-2xl shadow-sm space-y-6 max-w-4xl">
+      {/* 1. HERO CUSTOMIZER */}
+      <form 
+        onSubmit={(e) => handleFormSubmit(e, "hero")} 
+        className={`${activeTab === "hero" ? "space-y-6" : "hidden"} bg-[var(--card)] border border-[var(--border-color)]/80 p-6 rounded-2xl shadow-sm max-w-4xl`}
+      >
         <input type="hidden" name="typingConfig" value={JSON.stringify(typingConfig)} />
-        
-        {/* 1. HERO CUSTOMIZER */}
-        {activeTab === "hero" && (
-          <div className="space-y-6">
+        <div className="space-y-6">
             <h2 className="text-sm font-bold text-[var(--text-main)] uppercase tracking-wider pb-3 border-b border-[var(--border-color)]/60">
               Hero Section Layout
             </h2>
@@ -695,11 +703,28 @@ export function HomepageSettingsForm({
 
               </div>
             </div>
+
+            {/* Submit Bar */}
+            <div className="flex justify-end pt-4 border-t border-[var(--border-color)]/60">
+              <Button type="submit" disabled={isLoading} className="h-10 px-6 rounded-xl bg-[var(--primary)] text-white hover:bg-[var(--primary)]/90 font-semibold flex items-center justify-center gap-2 cursor-pointer shadow-sm">
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4.5 h-4.5 animate-spin" />
+                    <span>Saving Hero...</span>
+                  </>
+                ) : (
+                  <span>Save Hero Layout</span>
+                )}
+              </Button>
+            </div>
           </div>
-        )}
+        </form>
 
         {/* 2. AUTHOR PROFILE CARD */}
-        {activeTab === "profile" && (
+        <form 
+          onSubmit={(e) => handleFormSubmit(e, "profile")} 
+          className={`${activeTab === "profile" ? "space-y-6" : "hidden"} bg-[var(--card)] border border-[var(--border-color)]/80 p-6 rounded-2xl shadow-sm max-w-4xl`}
+        >
           <div className="space-y-6">
             <h2 className="text-sm font-bold text-[var(--text-main)] uppercase tracking-wider pb-3 border-b border-[var(--border-color)]/60">
               Personal Profile Card Info
@@ -745,11 +770,28 @@ export function HomepageSettingsForm({
               </div>
 
             </div>
+
+            {/* Submit Bar */}
+            <div className="flex justify-end pt-4 border-t border-[var(--border-color)]/60">
+              <Button type="submit" disabled={isLoading} className="h-10 px-6 rounded-xl bg-[var(--primary)] text-white hover:bg-[var(--primary)]/90 font-semibold flex items-center justify-center gap-2 cursor-pointer shadow-sm">
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4.5 h-4.5 animate-spin" />
+                    <span>Saving Profile...</span>
+                  </>
+                ) : (
+                  <span>Save Profile Card</span>
+                )}
+              </Button>
+            </div>
           </div>
-        )}
+        </form>
 
         {/* 3. FEATURED COLLECTIONS */}
-        {activeTab === "featured" && (
+        <form 
+          onSubmit={(e) => handleFormSubmit(e, "featured")} 
+          className={`${activeTab === "featured" ? "space-y-6" : "hidden"} bg-[var(--card)] border border-[var(--border-color)]/80 p-6 rounded-2xl shadow-sm max-w-4xl`}
+        >
           <div className="space-y-6">
             <h2 className="text-sm font-bold text-[var(--text-main)] uppercase tracking-wider pb-3 border-b border-[var(--border-color)]/60">
               Select Featured Homepage Items
@@ -838,24 +880,22 @@ export function HomepageSettingsForm({
               </div>
 
             </div>
+
+            {/* Submit Bar */}
+            <div className="flex justify-end pt-4 border-t border-[var(--border-color)]/60">
+              <Button type="submit" disabled={isLoading} className="h-10 px-6 rounded-xl bg-[var(--primary)] text-white hover:bg-[var(--primary)]/90 font-semibold flex items-center justify-center gap-2 cursor-pointer shadow-sm">
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4.5 h-4.5 animate-spin" />
+                    <span>Saving Featured...</span>
+                  </>
+                ) : (
+                  <span>Save Featured Selection</span>
+                )}
+              </Button>
+            </div>
           </div>
-        )}
-
-        {/* Submit Bar */}
-        <div className="flex justify-end pt-4 border-t border-[var(--border-color)]/60">
-          <Button type="submit" disabled={isLoading} className="h-10 px-6 rounded-xl bg-[var(--primary)] text-white hover:bg-[var(--primary)]/90 font-semibold flex items-center justify-center gap-2 cursor-pointer shadow-sm">
-            {isLoading ? (
-              <>
-                <Loader2 className="w-4.5 h-4.5 animate-spin" />
-                <span>Saving Config...</span>
-              </>
-            ) : (
-              <span>Save Homepage Configurations</span>
-            )}
-          </Button>
-        </div>
-
-      </form>
+        </form>
     </div>
   );
 }
