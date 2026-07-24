@@ -455,9 +455,32 @@ export default async function AdminDashboard() {
     );
   } catch (err: any) {
     return (
-      <div className="p-6 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 rounded-2xl text-red-900 dark:text-red-300 font-mono text-xs whitespace-pre-wrap overflow-auto">
-        <h2 className="text-base font-bold mb-2">Debug Error Info:</h2>
-        {err.stack || err.message || String(err)}
+      <div className="space-y-6 max-w-3xl mx-auto py-10">
+        <div className="bg-[var(--card)] border border-[var(--border-color)] rounded-2xl p-8 text-center space-y-6 shadow-sm relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent pointer-events-none" />
+          <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center text-red-600 dark:text-red-400 mx-auto animate-pulse">
+            <AlertCircle className="w-8 h-8" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-xl font-bold font-heading text-[var(--text-main)]">Dashboard System Alert</h2>
+            <p className="text-sm text-[var(--text-secondary)] leading-relaxed max-w-lg mx-auto">
+              An unexpected exception was encountered while aggregating metrics and logs. The administrative service framework captured this diagnostics trace.
+            </p>
+          </div>
+          
+          <div className="p-5 bg-[var(--secondary-bg)] border border-[var(--border-color)] rounded-xl text-red-600 dark:text-red-400 font-mono text-[10px] text-left whitespace-pre-wrap overflow-auto max-h-[300px] select-text">
+            {err.stack || err.message || String(err)}
+          </div>
+          
+          <div className="pt-2">
+            <Link 
+              href="/admin/dashboard" 
+              className="px-5 py-2.5 bg-[var(--primary)] text-white rounded-xl text-sm font-semibold hover:opacity-95 transition-all shadow-md shadow-primary/10 inline-flex items-center gap-2 cursor-pointer font-sans h-11"
+            >
+              Reload Overview
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }

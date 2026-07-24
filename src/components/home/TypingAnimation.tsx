@@ -1,13 +1,18 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useMemo, useRef } from "react";
 
 interface TypingAnimationProps {
   words: string[];
   className?: string;
   config?: {
     textColor?: string;
+    cursorColor?: string;
+    cursorWidth?: string;
+    cursorBlinkSpeed?: string;
+    typingSpeed?: number;
+    deleteSpeed?: number;
+    delayBetweenWords?: number;
     fontWeight?: string;
     fontSize?: string;
     textTransform?: string;
@@ -20,22 +25,35 @@ interface TypingAnimationProps {
     fontFamily?: string;
     lineHeight?: string;
     wordSpacing?: string;
-    delayBetweenWords?: number; // repurposed as show duration per phrase
   };
+  typingSpeed?: number;
+  deletingSpeed?: number;
+  pauseTime?: number;
 }
 
 export function TypingAnimation({
   words,
   className = "",
-  config
+  config,
+  typingSpeed = 80, // Natural fast speed
+  deletingSpeed = 40, // Natural quick delete
+  pauseTime = 2000 // 2s pause
 }: TypingAnimationProps) {
   const [mounted, setMounted] = useState(false);
-  const [index, setIndex] = useState(0);
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const [currentText, setCurrentText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   // Memoize configuration with fallback defaults
   const resolved = useMemo(() => ({
-    textColor: config?.textColor || "#F97316",
+    textColor: config?.textColor || "var(--primary)",
+    cursorColor: config?.cursorColor || "var(--primary)",
+    cursorWidth: config?.cursorWidth || "3px",
+    cursorBlinkSpeed: config?.cursorBlinkSpeed || "1s",
+    typingSpeed: config?.typingSpeed !== undefined ? Number(config.typingSpeed) : typingSpeed,
+    deleteSpeed: config?.deleteSpeed !== undefined ? Number(config.deleteSpeed) : deletingSpeed,
+    delayBetweenWords: config?.delayBetweenWords !== undefined ? Number(config.delayBetweenWords) : pauseTime,
     fontWeight: config?.fontWeight || "700",
     fontSize: config?.fontSize || "inherit",
     textTransform: config?.textTransform || "none",
@@ -47,9 +65,8 @@ export function TypingAnimation({
     animationEnabled: config?.animationEnabled ?? true,
     fontFamily: config?.fontFamily || "inherit",
     lineHeight: config?.lineHeight || "normal",
-    wordSpacing: config?.wordSpacing || "normal",
-    duration: config?.delayBetweenWords !== undefined ? Number(config.delayBetweenWords) : 3000
-  }), [config]);
+    wordSpacing: config?.wordSpacing || "normal"
+  }), [config, typingSpeed, deletingSpeed, pauseTime]);
 
   useEffect(() => {
     setMounted(true);
@@ -63,17 +80,56 @@ export function TypingAnimation({
     return () => mediaQuery.removeEventListener("change", handler);
   }, []);
 
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
-    if (!mounted || prefersReducedMotion || !words?.length || !resolved.animationEnabled || words.length <= 1) {
+    if (!mounted || prefersReducedMotion || !words?.length || !resolved.animationEnabled) {
+      if (words?.length) setCurrentText(words[0]);
       return;
     }
 
-    const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % words.length);
-    }, resolved.duration);
+    const currentWord = words[currentWordIndex] || "";
 
-    return () => clearInterval(interval);
-  }, [mounted, words, prefersReducedMotion, resolved.animationEnabled, resolved.duration]);
+    if (isDeleting) {
+      timerRef.current = setTimeout(() => {
+        setCurrentText((prev) => prev.slice(0, -1));
+      }, resolved.deleteSpeed);
+    } else {
+      timerRef.current = setTimeout(() => {
+        setCurrentText((prev) => currentWord.slice(0, prev.length + 1));
+      }, resolved.typingSpeed);
+    }
+
+    // When the word is fully typed, pause before deleting (only if there is more than 1 word)
+    if (!isDeleting && currentText === currentWord) {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      if (words.length > 1) {
+        timerRef.current = setTimeout(() => setIsDeleting(true), resolved.delayBetweenWords);
+      }
+    }
+
+    // When the word is fully erased, move to the next word
+    if (isDeleting && currentText === "") {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      setIsDeleting(false);
+      setCurrentWordIndex((prev) => (prev + 1) % words.length);
+    }
+
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [
+    mounted,
+    currentText,
+    isDeleting,
+    currentWordIndex,
+    words,
+    prefersReducedMotion,
+    resolved.typingSpeed,
+    resolved.deleteSpeed,
+    resolved.delayBetweenWords,
+    resolved.animationEnabled
+  ]);
 
   const textStyle: React.CSSProperties = {
     fontFamily: resolved.fontFamily !== "inherit" ? resolved.fontFamily : undefined,
@@ -83,7 +139,7 @@ export function TypingAnimation({
     letterSpacing: resolved.letterSpacing !== "normal" ? resolved.letterSpacing : undefined,
     wordSpacing: resolved.wordSpacing !== "normal" ? resolved.wordSpacing : undefined,
     lineHeight: resolved.lineHeight !== "normal" ? resolved.lineHeight : undefined,
-    textShadow: resolved.shadowEnabled ? "2px 2px 4px rgba(0, 0, 0, 0.15)" : undefined,
+    textShadow: resolved.shadowEnabled ? "2px 2px 4px rgba(0, 0, 0, 0.1)" : undefined,
     display: "inline-block",
   };
 
@@ -96,31 +152,47 @@ export function TypingAnimation({
   }
 
   // Prevent server layout shifts by returning first word statically during SSR
-  if (!mounted || prefersReducedMotion || !resolved.animationEnabled || !words?.length) {
+  if (!mounted) {
     return (
       <span className={className} style={textStyle}>
-        {words?.[0] || ""}
+        {words[0] || ""}
       </span>
     );
   }
 
-  const currentWord = words[index] || "";
+  if (prefersReducedMotion || !resolved.animationEnabled) {
+    return (
+      <span className={className} style={textStyle}>
+        {words[0] || ""}
+      </span>
+    );
+  }
 
   return (
-    <div className="relative inline-block overflow-hidden align-top" style={{ height: "1.25em" }}>
-      <AnimatePresence mode="wait">
-        <motion.span
-          key={currentWord}
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -15 }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className={`inline-block whitespace-nowrap ${className}`}
-          style={textStyle}
-        >
-          {currentWord}
-        </motion.span>
-      </AnimatePresence>
-    </div>
+    <>
+      <style>{`
+        @keyframes typing-cursor-blink {
+          50% { opacity: 0; }
+        }
+        .typing-cursor-animated {
+          animation: typing-cursor-blink var(--blink-duration, 1s) step-end infinite;
+        }
+      `}</style>
+      <span className={`inline-flex items-center select-none ${className}`} style={textStyle}>
+        <span>{currentText}</span>
+        <span 
+          className="typing-cursor-animated inline-block rounded" 
+          style={{
+            width: resolved.cursorWidth,
+            height: "1.1em",
+            backgroundColor: resolved.cursorColor,
+            marginLeft: "4px",
+            verticalAlign: "middle",
+            display: "inline-block",
+            ["--blink-duration" as any]: resolved.cursorBlinkSpeed
+          }}
+        />
+      </span>
+    </>
   );
 }
