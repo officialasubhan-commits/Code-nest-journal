@@ -18,9 +18,7 @@ export async function getBackups() {
 
 export async function createBackup(data: { name: string; description?: string; isAuto?: boolean }) {
   try {
-    if (!data.isAuto) {
-      await assertAdmin();
-    }
+    await assertAdmin();
     const backupData = {
       version: "2.0",
       timestamp: new Date().toISOString(),

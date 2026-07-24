@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { revalidatePath, revalidateTag } from "next/cache";
+import { assertAdmin } from "@/lib/auth";
 
 export async function createCertificate(data: {
   title: string;
@@ -14,6 +15,7 @@ export async function createCertificate(data: {
   published?: boolean;
 }) {
   try {
+    await assertAdmin();
     const cert = await prisma.certification.create({
       data: {
         ...data,
@@ -41,6 +43,7 @@ export async function updateCertificate(id: string, data: Partial<{
   published: boolean;
 }>) {
   try {
+    await assertAdmin();
     const cert = await prisma.certification.update({
       where: { id },
       data,
@@ -57,6 +60,7 @@ export async function updateCertificate(id: string, data: Partial<{
 
 export async function deleteCertificate(id: string) {
   try {
+    await assertAdmin();
     await prisma.certification.delete({
       where: { id },
     });
@@ -72,6 +76,7 @@ export async function deleteCertificate(id: string) {
 
 export async function toggleCertificatePublish(id: string, published: boolean) {
   try {
+    await assertAdmin();
     await prisma.certification.update({
       where: { id },
       data: { published },

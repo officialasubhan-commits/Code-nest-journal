@@ -9,6 +9,7 @@ import { cache } from "react";
 
 export async function initializeSettings() {
   try {
+    await assertAdmin();
     const brandExist = await prisma.brandSettings.findUnique({
       where: { id: "singleton" }
     });

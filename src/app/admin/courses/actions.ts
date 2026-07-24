@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { revalidatePath, revalidateTag } from "next/cache";
+import { assertAdmin } from "@/lib/auth";
 
 export async function createCourse(data: {
   title: string;
@@ -18,6 +19,7 @@ export async function createCourse(data: {
   price: number;
 }) {
   try {
+    await assertAdmin();
     const course = await prisma.course.create({
       data: {
         ...data,
@@ -37,6 +39,7 @@ export async function createCourse(data: {
 
 export async function updateCourse(id: string, data: any) {
   try {
+    await assertAdmin();
     // Separate relations and json/metadata from flat course columns if needed
     const { ...updateData } = data;
 
@@ -60,6 +63,7 @@ export async function updateCourse(id: string, data: any) {
 
 export async function deleteCourse(id: string) {
   try {
+    await assertAdmin();
     await prisma.course.delete({
       where: { id },
     });
@@ -77,6 +81,7 @@ export async function deleteCourse(id: string) {
 // Section Management
 export async function createSection(courseId: string, title: string, order: number) {
   try {
+    await assertAdmin();
     const section = await prisma.courseSection.create({
       data: {
         title,
@@ -95,6 +100,7 @@ export async function createSection(courseId: string, title: string, order: numb
 
 export async function updateSection(sectionId: string, title: string, order?: number) {
   try {
+    await assertAdmin();
     const section = await prisma.courseSection.update({
       where: { id: sectionId },
       data: {
@@ -113,6 +119,7 @@ export async function updateSection(sectionId: string, title: string, order?: nu
 
 export async function deleteSection(sectionId: string) {
   try {
+    await assertAdmin();
     const section = await prisma.courseSection.delete({
       where: { id: sectionId }
     });
@@ -128,6 +135,7 @@ export async function deleteSection(sectionId: string) {
 // Lesson Management
 export async function createLesson(sectionId: string, title: string, duration: string, order: number) {
   try {
+    await assertAdmin();
     const lesson = await prisma.lesson.create({
       data: {
         title,
@@ -158,6 +166,7 @@ export async function createLesson(sectionId: string, title: string, duration: s
 
 export async function updateLesson(lessonId: string, data: any) {
   try {
+    await assertAdmin();
     const lesson = await prisma.lesson.update({
       where: { id: lessonId },
       data
@@ -182,6 +191,7 @@ export async function updateLesson(lessonId: string, data: any) {
 
 export async function deleteLesson(lessonId: string) {
   try {
+    await assertAdmin();
     const lesson = await prisma.lesson.delete({
       where: { id: lessonId }
     });
@@ -209,6 +219,7 @@ export async function reorderCurriculum(
   sectionsOrder: { id: string; order: number; lessons: { id: string; order: number }[] }[]
 ) {
   try {
+    await assertAdmin();
     // Perform transactional updates
     await prisma.$transaction(
       sectionsOrder.flatMap((sec) => [
