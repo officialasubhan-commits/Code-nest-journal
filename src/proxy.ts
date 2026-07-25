@@ -27,6 +27,7 @@ export default withAuth(
     const isExempt =
       path === "/maintenance" ||
       path === "/api/maintenance/status" ||
+      path === "/api/revalidate-all-cache" ||
       path.startsWith("/api/auth") ||
       path.startsWith("/api/admin") ||
       path.startsWith("/_next") ||
