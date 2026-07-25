@@ -2,6 +2,8 @@ import { MetadataRoute } from 'next';
 import { getSiteSettings } from '@/app/admin/settings/actions';
 import prisma from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const settings = await getSiteSettings();
   const siteUrl = settings?.siteUrl || 'https://code-nest-journal.vercel.app';
