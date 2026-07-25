@@ -1,5 +1,17 @@
 import prisma from "./prisma";
-import { unstable_cache } from "next/cache";
+import { unstable_cache as next_unstable_cache } from "next/cache";
+
+// Environment-safe cache wrapper for standalone Node context support
+const unstable_cache = <T extends (...args: any[]) => Promise<any>>(
+  cb: T,
+  keyParts?: string[],
+  options?: { revalidate?: number | false; tags?: string[] }
+): T => {
+  if (typeof process !== "undefined" && !process.env.NEXT_RUNTIME) {
+    return cb;
+  }
+  return next_unstable_cache(cb, keyParts, options);
+};
 
 // 1. Site Settings Cache
 export const getCachedSettings = unstable_cache(
@@ -75,6 +87,17 @@ export const getCachedSettings = unstable_cache(
         if (error.code !== 'P2002') {
           console.error("Settings initialization error in cache:", error);
         }
+      }
+    }
+
+    if (brand && brand.siteUrl !== "https://code-nest-journal.vercel.app") {
+      try {
+        brand = await prisma.brandSettings.update({
+          where: { id: "singleton" },
+          data: { siteUrl: "https://code-nest-journal.vercel.app" }
+        });
+      } catch (error) {
+        console.error("Failed to auto-correct siteUrl in database:", error);
       }
     }
 
