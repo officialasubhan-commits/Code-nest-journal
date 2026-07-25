@@ -113,6 +113,12 @@ export default async function RootLayout({
       <head>
       </head>
       <body className={`${inter.variable} ${outfit.variable} font-sans antialiased text-[var(--text-main)]`}>
+        <a 
+          href="#main-content" 
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 bg-[var(--primary)] text-white px-4 py-2 rounded-xl z-[9999] font-sans font-semibold shadow-md outline-none"
+        >
+          Skip to content
+        </a>
         <ThemeProvider attribute="data-theme" defaultTheme={settings?.defaultTheme || "light"} enableSystem>
           <AuthProvider>
             <RealtimeSyncProvider>
@@ -124,7 +130,9 @@ export default async function RootLayout({
                   This prevents them from interfering with the admin panel's own full-screen layout.
                 */}
                 <Navbar siteTitle={settingsPayload.siteTitle} siteLogo={settingsPayload.siteLogo} />
-                {children}
+                <main id="main-content" className="focus:outline-none">
+                  {children}
+                </main>
                 <Footer siteTitle={settingsPayload.siteTitle} />
               </SiteSettingsProvider>
             </RealtimeSyncProvider>
