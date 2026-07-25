@@ -149,7 +149,7 @@ async function main() {
       challenges: "Synchronizing uncontrolled rich text values, handling asynchronous event cleanups in React, preventing layout shifts.",
       lessonsLearned: "Capturing synchronous synthetic event references inside React closures before awaiting asynchronous actions resolves event nullification issues.",
       technologies: ["Next.js", "React", "Prisma", "Tailwind CSS", "PostgreSQL", "Cloudinary"],
-      githubUrl: "https://github.com/officialasubhan-commits/Code-Nest",
+      githubUrl: "https://github.com/officialasubhan-commits/Code-nest-journal",
       liveUrl: "https://code-nest-journal.vercel.app",
       coverImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=600",
       images: ["https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=600"],
