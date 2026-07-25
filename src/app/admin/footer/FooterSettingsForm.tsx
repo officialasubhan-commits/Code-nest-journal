@@ -66,7 +66,7 @@ export function FooterSettingsForm({ settings }: { settings: any }) {
             <input 
               name="copyright" 
               type="text"
-              defaultValue={settings.copyright || `© ${new Date().getFullYear()} Boss Journal. All rights reserved.`} 
+              defaultValue={settings.copyright || `© ${new Date().getFullYear()} Code Nest. All rights reserved.`} 
               required 
               className={inputCls} 
             />

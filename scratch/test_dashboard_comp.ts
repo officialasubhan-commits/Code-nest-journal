@@ -38,17 +38,17 @@ async function run() {
 
     const settings = {
       id: "singleton",
-      siteTitle: brand?.siteTitle || "Boss Journal",
+      siteTitle: brand?.siteTitle || "Code Nest",
       siteTagline: brand?.siteTagline || "My personal portfolio, journal, and digital headquarters.",
       siteDescription: brand?.siteDescription || "My personal portfolio, journal, and digital headquarters.",
       siteLogo: brand?.siteLogo || "",
       siteFavicon: brand?.siteFavicon || "",
       defaultTheme: brand?.defaultTheme || "light",
       defaultLanguage: brand?.defaultLanguage || "en",
-      siteUrl: brand?.siteUrl || "http://localhost:3000",
+      siteUrl: brand?.siteUrl || "https://code-nest-journal.vercel.app",
       brandColors: brand?.brandColors || { primary: "#F97316", accent: "#FB7185" },
 
-      seoTitle: seo?.seoTitle || "Boss Journal | Portfolio & Digital Home",
+      seoTitle: seo?.seoTitle || "Code Nest | Portfolio & Digital Home",
       seoDescription: seo?.seoDescription || "My digital home, where I document my journey, learning, projects, and daily life.",
       seoKeywords: seo?.seoKeywords || "",
       ogImage: seo?.ogImage || "",

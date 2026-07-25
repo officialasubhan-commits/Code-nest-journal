@@ -222,12 +222,12 @@ async function main() {
     update: {},
     create: {
       id: "singleton",
-      siteTitle: "Boss Journal",
+      siteTitle: "Code Nest",
       siteTagline: "My personal portfolio, journal, and digital headquarters.",
       siteDescription: "My personal portfolio, journal, and digital headquarters.",
       siteLogo: "",
       siteFavicon: "",
-      siteUrl: "http://localhost:3000",
+      siteUrl: "https://code-nest-journal.vercel.app",
     }
   });
 

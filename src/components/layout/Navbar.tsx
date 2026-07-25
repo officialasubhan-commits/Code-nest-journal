@@ -24,7 +24,7 @@ const navLinks = [
 
 export function Navbar({ siteTitle: propSiteTitle, siteLogo: propSiteLogo }: { siteTitle?: string; siteLogo?: string }) {
   const { siteTitle: contextTitle, siteLogo: contextLogo } = useSiteSettings();
-  const siteTitle = propSiteTitle || contextTitle || "Boss Journal";
+  const siteTitle = propSiteTitle || contextTitle || "Code Nest";
   const siteLogo = propSiteLogo || contextLogo;
 
   const { data: session, status } = useSession();

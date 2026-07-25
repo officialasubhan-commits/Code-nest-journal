@@ -7,7 +7,7 @@ import { getSiteSettings } from "@/app/admin/settings/actions";
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
-  let siteTitle = "Boss Journal";
+  let siteTitle = "Code Nest";
   try {
     const settings = await getSiteSettings();
     if (settings?.siteTitle) {
@@ -35,7 +35,7 @@ export default async function MaintenancePage() {
     console.error("Failed to load site settings on maintenance page:", error);
   }
 
-  const siteTitle = settings?.siteTitle || "Boss Journal";
+  const siteTitle = settings?.siteTitle || "Code Nest";
   const siteLogo = settings?.siteLogo || "";
   const maintenanceMessage = settings?.maintenanceMessage || "We'll be back soon!";
 

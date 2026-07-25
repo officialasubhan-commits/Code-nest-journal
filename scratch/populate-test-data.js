@@ -141,16 +141,16 @@ async function main() {
   // 3. 5 Projects
   const projectsData = [
     {
-      title: "Boss Journal Portfolio Control Center",
-      slug: "boss-journal-portfolio-control-center",
+      title: "Code Nest Portfolio Control Center",
+      slug: "code-nest-portfolio-control-center",
       description: "A complete personal administration, analytics, and content studio dashboard built with Next.js 16 and Prisma.",
       content: "Created to replace scattered admin tasks. It features visual content creation, automated image cropping tools with direct Cloudinary storage pipelines, real-time message handling, and page-traffic metrics.",
       features: "Real-time notifications, unified content studio editor, database backups, automated analytics charts.",
       challenges: "Synchronizing uncontrolled rich text values, handling asynchronous event cleanups in React, preventing layout shifts.",
       lessonsLearned: "Capturing synchronous synthetic event references inside React closures before awaiting asynchronous actions resolves event nullification issues.",
       technologies: ["Next.js", "React", "Prisma", "Tailwind CSS", "PostgreSQL", "Cloudinary"],
-      githubUrl: "https://github.com/officialasubhan-commits/Dev-s-Journal",
-      liveUrl: "https://boss-journal.vercel.app",
+      githubUrl: "https://github.com/officialasubhan-commits/Code-Nest",
+      liveUrl: "https://code-nest-journal.vercel.app",
       coverImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=600",
       images: ["https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=600"],
       published: true,
@@ -243,7 +243,7 @@ async function main() {
     },
     {
       url: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=600",
-      caption: "Boss Journal Analytics Dashboard Layout Draft",
+      caption: "Code Nest Analytics Dashboard Layout Draft",
       authorId: admin.id,
       albumId: album.id
     },
@@ -332,7 +332,7 @@ async function main() {
     {
       userId: admin.id,
       type: "ANNOUNCEMENT",
-      title: "👋 Welcome to Boss Journal!",
+      title: "👋 Welcome to Code Nest!",
       message: "Welcome to my personal portfolio and learning journal.",
       link: "/",
       published: true,
@@ -402,7 +402,7 @@ async function main() {
     { title: "Contributed to Major Open Source Auth Library", description: "Fixed session synchronization edge cases inside NextAuth credentials verification loop." },
     { title: "AWS Solutions Architect Certified", description: "Cleared AWS Certified Solutions Architect Associate exam with a high score." },
     { title: "Launched Helios Solar Tracker Platform", description: "System is now actively used across three regional solar grids." },
-    { title: "Joined Boss Journal Core Development", description: "Took charge of full stack systems and advanced analytics design." }
+    { title: "Joined Code Nest Core Development", description: "Took charge of full stack systems and advanced analytics design." }
   ];
 
   for (const ach of achievementsData) {

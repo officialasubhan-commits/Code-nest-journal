@@ -3,13 +3,12 @@ import { getSiteSettings } from '@/app/admin/settings/actions';
 
 export default async function robots(): Promise<MetadataRoute.Robots> {
   const settings = await getSiteSettings();
-  const siteUrl = settings?.siteUrl || 'https://dev-s-journal.vercel.app';
+  const siteUrl = settings?.siteUrl || 'https://code-nest-journal.vercel.app';
   
   return {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: '/admin/',
     },
     sitemap: `${siteUrl}/sitemap.xml`,
   };

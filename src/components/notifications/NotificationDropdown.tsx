@@ -50,7 +50,7 @@ export function NotificationDropdown({ isPublicMode = false }: { isPublicMode?: 
           const welcomeNotif: NotificationData = {
             id: "welcome-local",
             type: "INFO",
-            title: "👋 Welcome to Boss Journal!",
+            title: "👋 Welcome to Code Nest!",
             message: "Welcome to my personal portfolio and learning journal.",
             link: "/",
             createdAt: new Date().toISOString(),
