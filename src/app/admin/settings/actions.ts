@@ -118,6 +118,7 @@ export const getSiteSettings = cache(async () => {
     defaultLanguage: brand?.defaultLanguage || "en",
     siteUrl: brand?.siteUrl || "https://code-nest-journal.vercel.app",
     brandColors: brand?.brandColors || { primary: "#F97316", accent: "#FB7185" },
+    updatedAt: brand?.updatedAt || new Date(),
 
     seoTitle: seo?.seoTitle || "Code Nest | Portfolio & Digital Home",
     seoDescription: seo?.seoDescription || "My digital home, where I document my journey, learning, projects, and daily life.",

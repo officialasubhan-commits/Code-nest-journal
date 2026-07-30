@@ -20,7 +20,7 @@ export default async function AboutPage() {
   const skills = admin?.skills && admin.skills.length > 0 ? admin.skills : ["Next.js", "React", "TypeScript", "Node.js", "Tailwind CSS"];
   const technologies = admin?.technologies && admin.technologies.length > 0 ? admin.technologies : ["HTML", "CSS", "JavaScript", "TypeScript", "Python", "React", "Next.js", "Node.js", "Git", "GitHub", "PostgreSQL", "Prisma", "Tailwind CSS"];
   const spokenLanguages = admin?.languages && admin.languages.length > 0 ? admin.languages : (admin?.spokenLanguages && admin.spokenLanguages.length > 0 ? admin.spokenLanguages : ["English", "Hindi", "Bengali"]);
-  const image = admin?.image || settings?.siteLogo || "/placeholder-avatar.png";
+  const image = settings?.aboutImage || "/placeholder-avatar.png";
 
   return (
     <div className="container mx-auto px-4 py-16 md:py-24">

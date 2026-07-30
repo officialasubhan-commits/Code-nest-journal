@@ -22,7 +22,7 @@ export type AboutFormData = {
   skills: string[];
   technologies: string[];
   spokenLanguages: string[];
-  image: string;
+  aboutImage: string;
   customStats: any;
 
   // Settings Models
@@ -79,7 +79,6 @@ export async function updateAboutProfile(data: Partial<AboutFormData>) {
     skills: data.skills !== undefined ? data.skills : admin.skills,
     technologies: data.technologies !== undefined ? data.technologies : admin.technologies,
     spokenLanguages: data.spokenLanguages !== undefined ? data.spokenLanguages : admin.spokenLanguages,
-    image: data.image !== undefined ? data.image : admin.image,
     customStats: data.customStats !== undefined ? data.customStats : admin.customStats,
   };
 
@@ -88,7 +87,7 @@ export async function updateAboutProfile(data: Partial<AboutFormData>) {
     data: userUpdates,
   });
 
-  const hasAboutSettingsUpdate = data.resumePdf !== undefined;
+  const hasAboutSettingsUpdate = data.resumePdf !== undefined || data.aboutImage !== undefined;
   const hasContactSettingsUpdate = 
     data.githubUrl !== undefined ||
     data.linkedinUrl !== undefined ||
@@ -105,10 +104,12 @@ export async function updateAboutProfile(data: Partial<AboutFormData>) {
         where: { id: "singleton" },
         update: {
           resumePdf: data.resumePdf !== undefined ? data.resumePdf : settings.resumePdf,
+          aboutImage: data.aboutImage !== undefined ? data.aboutImage : settings.aboutImage,
         },
         create: {
           id: "singleton",
           resumePdf: data.resumePdf !== undefined ? data.resumePdf : settings.resumePdf,
+          aboutImage: data.aboutImage !== undefined ? data.aboutImage : settings.aboutImage,
         }
       });
     }

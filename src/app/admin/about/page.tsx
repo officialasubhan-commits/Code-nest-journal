@@ -48,7 +48,7 @@ export default function AboutManagerPage() {
         skills: admin?.skills || [],
         technologies: admin?.technologies || [],
         spokenLanguages: admin?.spokenLanguages || [],
-        image: admin?.image || "",
+        aboutImage: settings?.aboutImage || "",
         customStats: admin?.customStats || [],
         resumePdf: settings?.resumePdf || "",
         githubUrl: settings?.githubUrl || "",
@@ -345,9 +345,9 @@ export default function AboutManagerPage() {
                   <div className="flex items-center gap-4">
                     <div className="w-40">
                       <ImageUploadCropper
-                        value={formData.image || undefined}
-                        onChange={(url) => setFormData({ ...formData, image: url })}
-                        onRemove={() => setFormData({ ...formData, image: "" })}
+                        value={formData.aboutImage || undefined}
+                        onChange={(url) => setFormData({ ...formData, aboutImage: url })}
+                        onRemove={() => setFormData({ ...formData, aboutImage: "" })}
                         circularCrop={true}
                         aspect={1}
                         maxSizeMB={5}
