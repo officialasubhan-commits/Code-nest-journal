@@ -188,76 +188,83 @@ export function ImageUploadCropper({
 
       {imageSrc && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="bg-[var(--card)] w-full max-w-3xl rounded-xl shadow-2xl overflow-hidden flex flex-col h-[85vh]">
-            <div className="p-4 border-b border-[var(--border-color)] flex justify-between items-center">
-              <h3 className="text-lg font-semibold">Crop Image</h3>
+          <div className="bg-[var(--card)] w-full max-w-3xl rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] md:max-h-[85vh] h-auto my-auto border border-[var(--border-color)]">
+            <div className="p-4 border-b border-[var(--border-color)] flex justify-between items-center flex-shrink-0">
+              <h3 className="text-lg font-semibold text-[var(--text-primary)]">Crop & Upload Image</h3>
               <Button type="button" variant="ghost" size="icon" onClick={() => setImageSrc(null)}>
                 <X className="h-5 w-5" />
               </Button>
             </div>
             
-            <div className="relative flex-1 bg-black/10 min-h-[300px]">
-              <Cropper
-                image={imageSrc}
-                crop={crop}
-                zoom={zoom}
-                rotation={rotation}
-                aspect={aspect}
-                cropShape={circularCrop ? "round" : "rect"}
-                onCropChange={setCrop}
-                onCropComplete={onCropComplete}
-                onZoomChange={setZoom}
-                onRotationChange={setRotation}
-              />
+            {/* Scrollable / Flexible content wrapper */}
+            <div className="flex-1 overflow-y-auto min-h-0 flex flex-col">
+              {/* Cropper Container: responsive height constraints */}
+              <div className="relative w-full aspect-video md:aspect-[16/10] min-h-[220px] max-h-[35vh] md:max-h-[45vh] bg-black/10 flex-shrink-0">
+                <Cropper
+                  image={imageSrc}
+                  crop={crop}
+                  zoom={zoom}
+                  rotation={rotation}
+                  aspect={aspect}
+                  cropShape={circularCrop ? "round" : "rect"}
+                  onCropChange={setCrop}
+                  onCropComplete={onCropComplete}
+                  onZoomChange={setZoom}
+                  onRotationChange={setRotation}
+                  objectFit="contain"
+                />
+              </div>
+              
+              {/* Controls section */}
+              <div className="p-4 md:p-6 bg-[var(--card)] space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-[var(--text-secondary)] flex items-center gap-1"><ZoomOut className="w-4 h-4"/> Zoom</span>
+                      <span className="text-[var(--text-secondary)] flex items-center gap-1"><ZoomIn className="w-4 h-4"/></span>
+                    </div>
+                    <input
+                      type="range"
+                      value={zoom}
+                      min={1}
+                      max={3}
+                      step={0.1}
+                      aria-labelledby="Zoom"
+                      onChange={(e) => setZoom(Number(e.target.value))}
+                      className="w-full accent-[var(--primary)] cursor-pointer"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-[var(--text-secondary)] flex items-center gap-1"><RotateCcw className="w-4 h-4"/> Rotation</span>
+                      <span className="text-[var(--text-secondary)]">{rotation}°</span>
+                    </div>
+                    <input
+                      type="range"
+                      value={rotation}
+                      min={0}
+                      max={360}
+                      step={1}
+                      aria-labelledby="Rotation"
+                      onChange={(e) => setRotation(Number(e.target.value))}
+                      className="w-full accent-[var(--primary)] cursor-pointer"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
-            
-            <div className="p-6 border-t border-[var(--border-color)] bg-[var(--card)] space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-[var(--text-secondary)] flex items-center gap-1"><ZoomOut className="w-4 h-4"/> Zoom</span>
-                    <span className="text-[var(--text-secondary)] flex items-center gap-1"><ZoomIn className="w-4 h-4"/></span>
-                  </div>
-                  <input
-                    type="range"
-                    value={zoom}
-                    min={1}
-                    max={3}
-                    step={0.1}
-                    aria-labelledby="Zoom"
-                    onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full accent-[var(--primary)]"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-[var(--text-secondary)] flex items-center gap-1"><RotateCcw className="w-4 h-4"/> Rotation</span>
-                    <span className="text-[var(--text-secondary)]">{rotation}°</span>
-                  </div>
-                  <input
-                    type="range"
-                    value={rotation}
-                    min={0}
-                    max={360}
-                    step={1}
-                    aria-labelledby="Rotation"
-                    onChange={(e) => setRotation(Number(e.target.value))}
-                    className="w-full accent-[var(--primary)]"
-                  />
-                </div>
-              </div>
 
-              <div className="flex justify-end gap-3 pt-2">
-                <Button type="button" variant="outline" onClick={() => { setZoom(1); setRotation(0); }}>
-                  Reset
-                </Button>
-                <Button type="button" variant="outline" onClick={() => setImageSrc(null)}>
-                  Cancel
-                </Button>
-                <Button type="button" onClick={handleSave} disabled={isUploading}>
-                  {isUploading ? "Processing..." : "Crop & Save"}
-                </Button>
-              </div>
+            {/* Footer buttons: always visible */}
+            <div className="p-4 border-t border-[var(--border-color)] bg-[var(--card)] flex justify-end gap-3 flex-shrink-0">
+              <Button type="button" variant="outline" onClick={() => { setZoom(1); setRotation(0); }}>
+                Reset
+              </Button>
+              <Button type="button" variant="outline" onClick={() => setImageSrc(null)}>
+                Cancel
+              </Button>
+              <Button type="button" onClick={handleSave} disabled={isUploading}>
+                {isUploading ? "Uploading..." : "Upload"}
+              </Button>
             </div>
           </div>
         </div>
